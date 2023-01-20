@@ -57,6 +57,14 @@ const QUESTIONS = {
       },
       theme: 'science',
       hasAnswered: false
+    },
+    {
+      question: '¿Cuántos huesos tiene un humano adulto?',
+      answers: {
+        options: ['412', '287', '306', '328'],
+        correctAnswer: 2
+      },
+      hasAnswered: false
     }
   ],
   history: [
@@ -77,22 +85,12 @@ const QUESTIONS = {
       },
       theme: 'history',
       hasAnswered: false
-    }
-  ],
-  random: [
+    },
     {
       question: '¿Dónde originaron los juegos olímpicos?',
       answers: {
         options: ['Cuenca', 'Grecia', 'Alemania', 'Dublin'],
         correctAnswer: 1
-      },
-      hasAnswered: false
-    },
-    {
-      question: '¿Cuántos huesos tiene un humano adulto?',
-      answers: {
-        options: ['412', '287', '306', '328'],
-        correctAnswer: 2
       },
       hasAnswered: false
     }
@@ -105,22 +103,54 @@ const allQuestions = [
   ...QUESTIONS.programming,
   ...QUESTIONS.science
 ];
-let questionNotAnswered;
 
 const startButtonElement = document.getElementById('start-button');
 const remainingTimeElement = document.getElementById('remaining-time');
 const questionElement = document.getElementById('game-question');
 const answerContainerElement = document.getElementById('answers');
 
-const printQuestion = (question) =>{
+let currentQuestion;
 
-}
 
-const sendQuestion = () =>{
-  
-}
 
-startButtonElement.addEventListener('click', () => {
-  startButtonElement.classList.add('button-display');
+const printQuestion = () => {
+  questionElement.textContent = allQuestions[currentQuestion].question;
 
+  const questionFragment = document.createDocumentFragment();
+  let possibleAnswers = allQuestions[currentQuestion].answers.options;
+
+  for (let index = 0; index < possibleAnswers.length; index++) {
+    const answersContainers = document.createElement('p');
+    answersContainers.textContent = possibleAnswers[index];
+    answersContainers.classList.add('answer');
+
+    const answersData = answersContainers.dataset.answers;
+    questionFragment.append(answersContainers);
+  }
+  answerContainerElement.append(questionFragment);
+};
+
+const filteredQuestion = () =>
+  allQuestions.filter(question => !question.hasAnswered);
+
+const selectRandomQuestion = () => {
+  const questionNotAnswered = filteredQuestion();
+  let randomQuestion;
+  randomQuestion = Math.floor(Math.random() * questionNotAnswered.length);
+
+  currentQuestion = randomQuestion;
+  printQuestion();
+};
+
+const correctAnswerFunction = answer => {
+  if(answer.textContent = )
+};
+selectRandomQuestion();
+
+// startButtonElement.addEventListener('click', () => {
+//   startButtonElement.classList.add('button-display');
+// });
+
+answerContainerElement.addEventListener('click', ev => {
+  correctAnswerFunction(ev.target);
 });
