@@ -64,6 +64,7 @@ const QUESTIONS = {
         options: ['412', '287', '306', '328'],
         correctAnswer: 2
       },
+      theme:'science',
       hasAnswered: false
     }
   ],
@@ -92,6 +93,7 @@ const QUESTIONS = {
         options: ['Cuenca', 'Grecia', 'Alemania', 'Dublin'],
         correctAnswer: 1
       },
+      theme: 'history',
       hasAnswered: false
     }
   ]
@@ -120,15 +122,25 @@ let currentQuestion;
 let possibleAnswers;
 let correctAnswer;
 let currentTheme;
+let remainingTime;
 
-const filteredQuestion = () =>
-  allQuestions.filter(question => !question.hasAnswered);
+const setRemainingTime = () => {
+  let remainingTime = 5;
+  intervalId = setInterval(() => {
+    remainingTime -= 0.1;
+    remainingTimeElement.textContent = remainingTime.toFixed(2);
+    if (remainingTime <= 0.1) {
+      clearInterval(intervalId);
+      printQuestion()
+    }
+  }, 100);
+};
 
 const printQuestion = () => {
   answerContainerElement.innerHTML = '';
-  questionElement.textContent = allQuestions[currentQuestion].question;
+  questionElement.textContent = currentQuestion.question;
   const questionFragment = document.createDocumentFragment();
-  possibleAnswers = allQuestions[currentQuestion].answers.options;
+  possibleAnswers = currentQuestion.answers.options;
 
   possibleAnswers.forEach((answer, index) => {
     const answersContainers = document.createElement('p');
@@ -138,15 +150,16 @@ const printQuestion = () => {
   });
 
   answerContainerElement.append(questionFragment);
+  setRemainingTime()
 };
 
+const filteredQuestion = () =>
+  allQuestions.filter(question => !question.hasAnswered);
 const selectRandomQuestion = () => {
-  const questionNotAnswered = filteredQuestion();
+  let questionNotAnswered = filteredQuestion();
   let randomQuestion;
-  randomQuestion = Math.floor(Math.random() * questionNotAnswered.length);
-
-  currentQuestion = randomQuestion;
-
+  randomQuestion = questionNotAnswered[Math.floor(Math.random() * questionNotAnswered.length)];
+  currentQuestion = randomQuestion
   printQuestion();
 };
 
@@ -156,18 +169,24 @@ const updateScore = () => {
 };
 
 const checkAnswer = answer => {
-  correctAnswer = allQuestions[currentQuestion].answers.correctAnswer;
-  currentTheme = allQuestions[currentQuestion].theme;
+  selectRandomQuestion();
+  correctAnswer = currentQuestion.answers.correctAnswer;
+  currentTheme = currentQuestion.theme;
+ 
   if (answer.textContent === possibleAnswers[correctAnswer]) {
-    score[allQuestions[currentQuestion].theme]++;
+    score[currentTheme]++;
     updateScore();
   }
-
-  selectRandomQuestion();
+  currentQuestion.hasAnswered = true;
+  
 };
 
 answerContainerElement.addEventListener('click', ev => {
+  clearInterval(intervalId);
   checkAnswer(ev.target);
+ setRemainingTime()
+  
+  
 });
 
 startButtonElement.addEventListener('click', () => {
