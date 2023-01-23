@@ -104,34 +104,41 @@ const allQuestions = [
   ...QUESTIONS.science
 ];
 
+const score = {
+  programming: 0,
+  math: 0,
+  history: 0,
+  science: 0
+};
+
 const startButtonElement = document.getElementById('start-button');
 const remainingTimeElement = document.getElementById('remaining-time');
 const questionElement = document.getElementById('game-question');
 const answerContainerElement = document.getElementById('answers');
 
 let currentQuestion;
-
-
-
-const printQuestion = () => {
-  questionElement.textContent = allQuestions[currentQuestion].question;
-
-  const questionFragment = document.createDocumentFragment();
-  let possibleAnswers = allQuestions[currentQuestion].answers.options;
-
-  for (let index = 0; index < possibleAnswers.length; index++) {
-    const answersContainers = document.createElement('p');
-    answersContainers.textContent = possibleAnswers[index];
-    answersContainers.classList.add('answer');
-
-    const answersData = answersContainers.dataset.answers;
-    questionFragment.append(answersContainers);
-  }
-  answerContainerElement.append(questionFragment);
-};
+let possibleAnswers;
+let correctAnswer;
+let currentTheme;
 
 const filteredQuestion = () =>
   allQuestions.filter(question => !question.hasAnswered);
+
+const printQuestion = () => {
+  answerContainerElement.innerHTML = '';
+  questionElement.textContent = allQuestions[currentQuestion].question;
+  const questionFragment = document.createDocumentFragment();
+  possibleAnswers = allQuestions[currentQuestion].answers.options;
+
+  possibleAnswers.forEach((answer, index) => {
+    const answersContainers = document.createElement('p');
+    answersContainers.textContent = possibleAnswers[index];
+    answersContainers.classList.add('answer');
+    questionFragment.append(answersContainers);
+  });
+
+  answerContainerElement.append(questionFragment);
+};
 
 const selectRandomQuestion = () => {
   const questionNotAnswered = filteredQuestion();
@@ -139,18 +146,31 @@ const selectRandomQuestion = () => {
   randomQuestion = Math.floor(Math.random() * questionNotAnswered.length);
 
   currentQuestion = randomQuestion;
+
   printQuestion();
 };
 
-const correctAnswerFunction = answer => {
-  if(answer.textContent = )
+const updateScore = () => {
+  document.getElementById(`${currentTheme}-score`).textContent =
+    score[currentTheme];
 };
-selectRandomQuestion();
 
-// startButtonElement.addEventListener('click', () => {
-//   startButtonElement.classList.add('button-display');
-// });
+const checkAnswer = answer => {
+  correctAnswer = allQuestions[currentQuestion].answers.correctAnswer;
+  currentTheme = allQuestions[currentQuestion].theme;
+  if (answer.textContent === possibleAnswers[correctAnswer]) {
+    score[allQuestions[currentQuestion].theme]++;
+    updateScore();
+  }
+
+  selectRandomQuestion();
+};
 
 answerContainerElement.addEventListener('click', ev => {
-  correctAnswerFunction(ev.target);
+  checkAnswer(ev.target);
+});
+
+startButtonElement.addEventListener('click', () => {
+  startButtonElement.classList.add('button-display');
+  selectRandomQuestion();
 });
