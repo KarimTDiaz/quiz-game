@@ -110,6 +110,22 @@ body {
   grid-column: 1 / -1;
 }
 
+.button--reset{
+  display: none;
+}
+
 .button-display{
   display: none;
+}
+
+.answers-display{
+  display: none;
+}
+
+.timer-display{
+  display: none;
+}
+
+.reset-display{
+  display: block;
 }
